@@ -5,10 +5,11 @@ import "fmt"
 type Animal interface {
 	getName() string
 	getWeight() float32
+	getAvgFood() float32
 }
 
 const (
-	dogsEatsPerKg float32 = 2 // 10 / 5 = 2
+	dogsEatsPerKg float32 = 2
 	catEatsPerKg  float32 = 7
 	cowEatsPerKg  float32 = 25
 )
@@ -18,12 +19,16 @@ type Cat struct {
 	weight float32
 }
 
-func (c *Cat) getName() string {
+func (c Cat) getName() string {
 	return c.name
 }
 
-func (c *Cat) getWeight() float32 {
+func (c Cat) getWeight() float32 {
 	return c.weight
+}
+
+func (c Cat) getAvgFood() float32 {
+	return c.weight * catEatsPerKg
 }
 
 type Dog struct {
@@ -31,12 +36,16 @@ type Dog struct {
 	weight float32
 }
 
-func (d *Dog) getName() string {
+func (d Dog) getName() string {
 	return d.name
 }
 
-func (d *Dog) getWeight() float32 {
+func (d Dog) getWeight() float32 {
 	return d.weight
+}
+
+func (d Dog) getAvgFood() float32 {
+	return d.weight * catEatsPerKg
 }
 
 type Cow struct {
@@ -44,30 +53,23 @@ type Cow struct {
 	weight float32
 }
 
-func (c *Cow) getName() string {
+func (c Cow) getName() string {
 	return c.name
 }
 
-func (c *Cow) getWeight() float32 {
+func (c Cow) getWeight() float32 {
 	return c.weight
+}
+
+func (c Cow) getAvgFood() float32 {
+	return c.weight * catEatsPerKg
 }
 
 func getInfo(animals []Animal) float32 {
 	var result float32
 	for _, animal := range animals {
-		switch animal.(type) {
-		case *Dog:
-			result += animal.getWeight() * dogsEatsPerKg
-			fmt.Printf("Dog %s weight %.0f kg needs %.0f kg food per month\n", animal.getName(), animal.getWeight(), animal.getWeight()*dogsEatsPerKg)
-		case *Cat:
-			result += animal.getWeight() * catEatsPerKg
-			fmt.Printf("Cat %s weight %.0f kg needs %.0f kg food per month\n", animal.getName(), animal.getWeight(), animal.getWeight()*catEatsPerKg)
-		case *Cow:
-			result += animal.getWeight() * cowEatsPerKg
-			fmt.Printf("Cow %s weight %.0f kg needs %.0f kg food per month\n", animal.getName(), animal.getWeight(), animal.getWeight()*cowEatsPerKg)
-		default:
-			fmt.Printf("Unknown animal type %t\n", animal)
-		}
+		result += animal.getAvgFood()
+		fmt.Printf("%s weight %.0f kg needs %.0f kg food per month\n", animal.getName(), animal.getWeight(), animal.getAvgFood())
 	}
 	return result
 }
@@ -75,50 +77,37 @@ func getInfo(animals []Animal) float32 {
 func main() {
 	farm := []Animal{
 		&Cat{
-			name:   "Boris",
+			name:   "Cat Boris",
 			weight: 4.5},
 		&Cat{
-			name:   "Venya",
+			name:   "Cat Venya",
 			weight: 6,
 		},
 		&Cat{
-			name:   "Brunya",
+			name:   "Cat Brunya",
 			weight: 2.2,
 		},
 		&Dog{
-			name:   "Barbos",
+			name:   "Dog Barbos",
 			weight: 15,
 		},
 		&Dog{
-			name:   "Matros",
+			name:   "Dog Matros",
 			weight: 12,
 		},
 		&Cow{
-			name:   "Milka",
+			name:   "Cow Milka",
 			weight: 400,
 		},
 		&Cow{
-			name:   "Roshen",
+			name:   "Cow Roshen",
 			weight: 390,
 		},
 		&Cow{
-			name:   "Snickers",
+			name:   "Cow Snickers",
 			weight: 405,
 		},
-		&Cow{
-			name:   "Bounty",
-			weight: 350,
-		},
-		&Cow{
-			name:   "Nuts",
-			weight: 380,
-		},
-		&Cow{
-			name:   "Kittkat",
-			weight: 410,
-		},
 	}
-
 	sum := getInfo(farm)
 	fmt.Println("Total foods for all animals:", sum, "kg")
 }
